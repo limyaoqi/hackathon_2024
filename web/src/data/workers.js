@@ -7,7 +7,7 @@ const workersData = [
     taskEfficiency: {
       harvesting: 90, // Efficiency percentage for harvesting
       fertilizing: 85,
-      spraying: NaN,  // NaN for tasks not applicable
+      spraying: NaN, // NaN for tasks not applicable
     },
     availability: true, // Worker availability
     points: 1250, // Points earned by the worker
@@ -195,5 +195,10 @@ const workersData = [
     points: 1235,
   },
 ];
+
+workersData.sort((a, b) => b.points - a.points);
+workersData.forEach((item, index) => {
+  item.rank = index + 1;
+});
 
 export default workersData;
