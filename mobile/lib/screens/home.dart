@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  // Compulsory plantation tasks with completion status
+class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> compulsoryTasks = [
     {"task": "Water the plants", "isCompleted": false},
     {"task": "Check soil moisture", "isCompleted": false},
@@ -40,10 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
     bool allCompulsoryTasksCompleted = _areAllCompulsoryTasksCompleted();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Plantation Activities"),
-        backgroundColor: Colors.green[700],
-      ),
+      // appBar: AppBar(
+      //   title: const Text("Plantation Activities"),
+      //   backgroundColor: Colors.green[700],
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -51,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const Text(
               "Today's Tasks",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
@@ -102,7 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.nature_people,
                         color: allCompulsoryTasksCompleted
                             ? Colors.green[600]
-                            : Colors.grey, // Disable look if compulsory not completed
+                            : Colors
+                                .grey, // Disable look if compulsory not completed
                       ),
                       title: Text(
                         additionalTasks[index]['task'],
