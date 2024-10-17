@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import groupsData from "@/data/groups";
-import workersData from "@/data/workers";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -17,40 +15,43 @@ import {
 } from "@nextui-org/react";
 import GroupChart from "@/components/GroupChart";
 
-export default function Group({ params }) {
+export default function TeamDetails({ params }) {
   const router = useRouter();
-  const [group, setGroup] = useState();
-  const [workers, setWorkers] = useState();
+  const [team, setTeam] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let curGroup = groupsData.find(
-      (group) => group.id.toString() === params.id
-    );
-    setGroup(curGroup);
-
-    let ourWorkers = [];
-    for (let worker of workersData) {
-      if (
-        curGroup.leader === worker.name ||
-        curGroup.members.includes(worker.name)
-      ) {
-        ourWorkers.push(worker);
+    const fetchTeamData = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/team/${params.id}`);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setTeam(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
-    }
-    setWorkers(ourWorkers);
-  }, [params]);
+    };
 
+    fetchTeamData();
+  }, [params.team_id]);
+
+  if (loading) return <p>Loading team details...</p>;
+  if (error) return <p>Error fetching team details: {error}</p>;
+  console.log(team);
   return (
-    group && (
+    team && (
       <div className="container mx-auto p-10">
-        <h1 className=" font-bold text-4xl">{group.name}</h1>
-        <p className="mb-5">ID: {group.id}</p>
+        <h1 className="font-bold text-4xl">{team.team_id}</h1>
+        <p className="mb-5">Last Active Month: {team.last_active_month}</p>
 
-        {/* <div className="flex justify-center"> */}
         <div className="max-w-6xl mx-auto">
-          <GroupChart group={group} />
+          <GroupChart group={team} />
         </div>
-        {/* </div> */}
 
         <Table aria-label="table" selectionMode="single">
           <TableHeader>
@@ -62,32 +63,27 @@ export default function Group({ params }) {
             <TableColumn>POINTS</TableColumn>
           </TableHeader>
           <TableBody>
-            {workers.map((worker) => (
+            {team.members.map((worker) => (
               <TableRow
                 key={worker.id}
-                className=""
-                onClick={() => router.push(`/workers/${worker.id}`)}
+                onClick={() => router.push(`/workers/${worker.worker_id}`)}
               >
-                <TableCell className=" font-bold">{worker.id}</TableCell>
+                <TableCell className="font-bold">{worker.worker_id}</TableCell>
                 <TableCell>
                   <User name={worker.name} />
                 </TableCell>
                 <TableCell>
-                  {worker.skillSet &&
-                    worker.skillSet.map(
-                      (skill, idx) =>
-                        skill.toString() != "NaN" && (
-                          <Chip
-                            className="capitalize"
-                            color="primary"
-                            size="sm"
-                            variant="flat"
-                            key={idx}
-                          >
-                            {skill}
-                          </Chip>
-                        )
-                    )}
+                  {worker.highest_task && (
+                    <Chip
+                      className="capitalize"
+                      color="primary"
+                      size="sm"
+                      variant="flat"
+                      // key={idx}
+                    >
+                      {worker.highest_task}
+                    </Chip>
+                  )}
                 </TableCell>
                 <TableCell>
                   <Chip
@@ -102,14 +98,16 @@ export default function Group({ params }) {
                 <TableCell>
                   <Chip
                     className="capitalize"
-                    color={worker.role === "Leader" ? "warning" : "default"}
+                    color={
+                      worker.worker_id === team.leader ? "warning" : "default"
+                    }
                     size="sm"
                     variant="flat"
                   >
-                    {worker.role}
+                    {worker.worker_id  === team.leader ? "leader" : "member"}
                   </Chip>
                 </TableCell>
-                <TableCell>{worker.points}</TableCell>
+                <TableCell>{worker.total_productivity}</TableCell>
               </TableRow>
             ))}
           </TableBody>

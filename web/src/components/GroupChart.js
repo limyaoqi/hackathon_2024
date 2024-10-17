@@ -38,7 +38,7 @@ const GroupChart = ({ group }) => {
     labels,
     datasets: [
       {
-        label: `${group.name} Productivity`,
+        label: `${group.team_id} Productivity`,
         data: performanceData,
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
@@ -50,7 +50,7 @@ const GroupChart = ({ group }) => {
         pointBorderColor: "rgba(255, 99, 71, 1)",
       },
       {
-        label: `${group.name} Accumulated Productivity`,
+        label: `${group.team_id} Accumulated Productivity`,
         data: accumulatedData,
         borderColor: "rgba(255, 99, 132, 1)",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
@@ -72,7 +72,7 @@ const GroupChart = ({ group }) => {
       },
       title: {
         display: true,
-        text: `Monthly Performance of ${group.name}`,
+        text: `Monthly Performance of ${group.team_id}`,
       },
     },
     scales: {

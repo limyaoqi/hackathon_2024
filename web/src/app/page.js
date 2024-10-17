@@ -227,7 +227,7 @@ export default function Home() {
                 topGroups.map((group, index) => (
                   <TableRow
                     key={group.id}
-                    onClick={() => router.push(`/groups/${group.id}`)}
+                    onClick={() => router.push(`/groups/${group.team_id}`)}
                   >
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{group.team_id}</TableCell>

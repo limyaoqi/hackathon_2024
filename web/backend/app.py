@@ -108,6 +108,87 @@ def get_worker_performance(worker_id):
         "performance": worker_prod
     })
 
+@app.route('/teams', methods=['GET'])
+def get_all_teams():
+    teams_ref = db.collection('teams')
+    teams = teams_ref.stream()
+    
+    all_teams = []
+    
+    for team in teams:
+        team_data = team.to_dict()
+        all_teams.append({
+            "team_id": team_data['team_id'],
+            "leader": team_data['leader'],
+            "members": team_data['members'],
+            "total_productivity": team_data['total_productivity'],
+            "last_active_month": team_data['last_active_month'],
+            "productivity": team_data['productivity']  # assuming this is a list of monthly performance
+        })
+    
+    return jsonify(all_teams), 200
+
+
+@app.route('/team/<team_id>', methods=['GET'])
+def get_team(team_id):
+    team_ref = db.collection('teams').document(team_id)
+    team = team_ref.get()
+
+    if team.exists:
+        team_data = team.to_dict()
+        
+        leader = team_data.get('leader')  # Directly accessing the leader string
+        members = team_data.get('members', [])  # List of member IDs
+
+        # Initialize a list to hold member data
+        member_data_list = []
+
+        # Fetch each member's data
+        for member_id in members:
+            member_ref = db.collection('workers').document(member_id)
+            member = member_ref.get()
+
+            if member.exists:
+                member_data = member.to_dict()
+                
+                # Calculate total productivity and get highest task productivity
+                task_productivity = member_data.get('task_productivity', {})
+                total_productivity = member_data.get('total_productivity', 0)
+                highest_task = max(task_productivity, key=task_productivity.get) if task_productivity else None
+                highest_productivity = task_productivity[highest_task] if highest_task else None
+
+                member_data_list.append({
+                    "worker_id": member_id,
+                    "name": member_data.get('name'),  # Assuming there's a name field
+                    "skill_level": member_data.get('skill_level'),  # Assuming there's a skill level field
+                    "experience": member_data.get('experience'),  # Assuming there's an experience field
+                    "total_productivity": total_productivity,  # Total productivity of the worker
+                    "highest_task": highest_task,  # Task with the highest productivity
+                    "highest_productivity": highest_productivity  # Highest productivity score
+                })
+            else:
+                # If a member does not exist, handle accordingly
+                member_data_list.append({
+                    "worker_id": member_id,
+                    "error": "Worker not found"
+                })
+
+        # Return structured response with member data
+        return jsonify({
+            "team_id": team_data.get('team_id'),
+            "leader": leader,
+            "members": member_data_list,  # List of member data
+            "productivity": team_data.get('productivity', []),  # Monthly productivity data
+            "total_productivity": team_data.get('total_productivity'),  # Total productivity
+            "last_active_month": team_data.get('last_active_month')  # Last active month
+        }), 200
+    else:
+        return jsonify({'error': 'Team not found'}), 404
+
+
+
+
+
 
 @app.route('/assign-teams', methods=['GET'])
 def assign_teams_route():
