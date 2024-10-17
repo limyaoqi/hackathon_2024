@@ -7,35 +7,53 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Button,
   User,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import workersData from "@/data/workers";
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   const [workers, setWorkers] = useState(workersData);
-  const [sortBy, setSortBy] = useState(false);
+  const [sortBy, setSortBy] = useState("points1");
 
   useEffect(() => {
     let sortedWorkers = [...workersData];
 
-    if (sortBy) {
+    if (sortBy === "id") {
+      sortedWorkers = sortedWorkers.sort((a, b) => a.id - b.id);
+    } else if (sortBy === "points2") {
       sortedWorkers = sortedWorkers.sort((a, b) => a.points - b.points);
     } else {
-      sortedWorkers = sortedWorkers.sort((a, b) => a.id - b.id);
+      sortedWorkers = sortedWorkers.sort((a, b) => b.points - a.points);
     }
 
     setWorkers(sortedWorkers);
+
+    console.log(sortBy);
   }, [sortBy]);
 
   return (
-    <div class="container mx-auto p-10">
-      <div className=" flex justify-between">
-        <h1 className=" font-bold text-4xl mb-5">Dashboard</h1>
-        <Button color="primary" onClick={() => setSortBy(!sortBy)}>
-          {!sortBy ? "Sort By Points" : "Sort By ID"}
-        </Button>
+    <div className="container mx-auto p-10">
+      <div className=" flex justify-between align-middle mb-5">
+        <h1 className=" font-bold text-4xl">Dashboard</h1>
+
+        <Select
+          //   label="Sort By"
+          //   labelPlacement="outside"
+          aria-label="sort"
+          placeholder="Sort By Points (High to Low)"
+          className="max-w-xs"
+          size=""
+          variant="faded"
+          value={sortBy}
+          onChange={(target) => setSortBy(target.target.value)}
+        >
+          <SelectItem key="id">Sort By ID</SelectItem>
+          <SelectItem key="points1">Sort By Points (High to Low)</SelectItem>
+          <SelectItem key="points2">Sort By Points (Low to High)</SelectItem>
+        </Select>
       </div>
 
       <Table
@@ -43,15 +61,19 @@ export default function Dashboard() {
         selectionMode="single"
       >
         <TableHeader>
-          <TableColumn>{!sortBy ? "ID" : "RANK"}</TableColumn>
+          <TableColumn>{sortBy === "id" ? "ID" : "RANK"}</TableColumn>
           <TableColumn>NAME</TableColumn>
           <TableColumn>POINTS</TableColumn>
         </TableHeader>
         <TableBody>
           {workers &&
             workers.map((worker, idx) => (
-              <TableRow key={worker.id}>
-                <TableCell>{idx + 1}</TableCell>
+              <TableRow key={worker.id} className="">
+                <TableCell>
+                  {sortBy === "points1" || sortBy === "id"
+                    ? idx + 1
+                    : Math.abs(idx - 50)}
+                </TableCell>
                 <TableCell>
                   <User
                     name={worker.name}
