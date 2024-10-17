@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/screen/home_screen.dart';
+import 'package:mobile/root.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,13 +12,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const HomeScreen());
-=======
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -75,7 +68,5 @@ class _MainState extends State<Main> {
       // home: const VerificationPage(verificationId: "dsd"),
       home: RootPage(),
     );
->>>>>>> 0c53bd1bc98887ac4dcb9de16ddb68951074ef89
   }
 }
-
