@@ -6,6 +6,9 @@
 .pnp.js
 .yarn/install-state.gz
 
+/web/backend/hackathon-e2197-firebase-adminsdk-rxr8h-aeb3bc1cc5.json
+
+
 # testing
 /coverage
 
