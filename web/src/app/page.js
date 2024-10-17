@@ -1,46 +1,57 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import workersData from "@/data/workers";
-import groupsData from "@/data/groups";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Select,
-  SelectItem,
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableColumn,
-  User,
-} from "@nextui-org/react";
+"use client"; // Ensures the component is client-side rendered
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function Home() {
-  const router = useRouter();
-  const [timeRange, setTimeRange] = useState("daily");
   const [topWorkers, setTopWorkers] = useState([]);
-  const [topGroups, setTopGroups] = useState(groupsData);
+  const [topTeams, setTopTeams] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log(groupsData);
+    // Fetch top workers
+    fetch("http://localhost:5000/top-workers")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      })
+      .then((data) => setTopWorkers(data))
+      .catch((error) => setError(error.message));
 
-    let topWork = [];
-    for (let i = 0; i < 5; i++) {
-      topWork.push(workersData[i]);
-    }
-    setTopWorkers(topWork);
+    // Fetch top teams
+    fetch("http://localhost:5000/top-teams")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      })
+      .then((data) => setTopTeams(data))
+      .catch((error) => setError(error.message));
   }, []);
 
-  const exportToExcel = () => {
-    // Implementation for Excel export would go here
-    console.log("Exporting to Excel...");
-  };
-
   return (
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      {/* Display error message if fetch fails */}
+      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+
+      {/* Left side - Top Workers */}
+      <div style={{ width: "45%" }}>
+        <h2>Top Workers</h2>
+        <ul>
+          {topWorkers.length > 0 ? (
+            topWorkers.map((worker) => (
+              <li key={worker.id}>
+                {worker.name} - {worker.rating}
+              </li>
+            ))
+          ) : (
+            <p>No workers found</p>
+          )}
+        </ul>
+        <Link href="/workers">See All Workers</Link>
     <div className="container mx-auto p-10">
       {/* TOP */}
       <div className="flex justify-between items-center mb-5">
@@ -149,89 +160,21 @@ export default function Home() {
         </Card>
       </div>
 
-      {/* Productivity Chart */}
-      <div className="grid grid-cols-2 gap-5">
-        {/* WORKERS */}
-        <div className="">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">
-              Top Workers
-            </h2>
-            <Button
-              size="sm"
-              color="primary"
-              variant="light"
-              onClick={() => router.push("/workers")}
-            >
-              See More
-            </Button>
-          </div>
-
-          {/* TABLE */}
-          <Table
-            aria-label="Example table with custom cells"
-            selectionMode="single"
-          >
-            <TableHeader>
-              <TableColumn>RANK</TableColumn>
-              <TableColumn>NAME</TableColumn>
-              <TableColumn>POINTS</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {topWorkers &&
-                topWorkers.map((worker) => (
-                  <TableRow
-                    key={worker.id}
-                    onClick={() => router.push(`/workers/${worker.id}`)}
-                  >
-                    <TableCell>{worker.rank}</TableCell>
-                    <TableCell>{worker.name}</TableCell>
-                    <TableCell>{worker.points}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* GROUPS */}
-        <div>
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">Groups</h2>
-            <Button
-              size="sm"
-              color="primary"
-              variant="light"
-              onClick={() => router.push("/groups")}
-            >
-              See More
-            </Button>
-          </div>
-
-          {/* TABLE */}
-          <Table
-            aria-label="Example table with custom cells"
-            selectionMode="single"
-          >
-            <TableHeader>
-              <TableColumn>NO.</TableColumn>
-              <TableColumn>NAME</TableColumn>
-              <TableColumn>LEADER</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {topGroups &&
-                topGroups.map((group, idx) => (
-                  <TableRow
-                    key={idx}
-                    onClick={() => router.push(`/groups/${group.id}`)}
-                  >
-                    <TableCell>{idx + 1}</TableCell>
-                    <TableCell>{group.name}</TableCell>
-                    <TableCell>{group.leader}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </div>
+      {/* Right side - Top Teams */}
+      <div style={{ width: "45%" }}>
+        <h2>Top Teams</h2>
+        <ul>
+          {topTeams.length > 0 ? (
+            topTeams.map((team) => (
+              <li key={team.id}>
+                {team.name} - {team.rating}
+              </li>
+            ))
+          ) : (
+            <p>No teams found</p>
+          )}
+        </ul>
+        <Link href="/teams">See All Teams</Link>
       </div>
     </div>
   );
