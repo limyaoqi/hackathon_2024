@@ -1,8 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import workersData from "@/data/workers";
-import groupsData from "@/data/groups";
 import {
   Button,
   Card,
@@ -16,23 +14,30 @@ import {
   TableRow,
   TableCell,
   TableColumn,
-  User,
 } from "@nextui-org/react";
 
 export default function Home() {
   const router = useRouter();
   const [timeRange, setTimeRange] = useState("daily");
   const [topWorkers, setTopWorkers] = useState([]);
-  const [topGroups, setTopGroups] = useState(groupsData);
+  const [topGroups, setTopGroups] = useState([]);
 
   useEffect(() => {
-    console.log(groupsData);
+    // Fetch top workers from the Flask backend
+    fetch("http://localhost:5000/top-workers")
+      .then((response) => response.json())
+      .then((data) => {
+        setTopWorkers(data);
+      })
+      .catch((error) => console.error("Error fetching workers:", error));
 
-    let topWork = [];
-    for (let i = 0; i < 5; i++) {
-      topWork.push(workersData[i]);
-    }
-    setTopWorkers(topWork);
+    // Fetch top teams from the Flask backend
+    fetch("http://localhost:5000/top-teams")
+      .then((response) => response.json())
+      .then((data) => {
+        setTopGroups(data);
+      })
+      .catch((error) => console.error("Error fetching teams:", error));
   }, []);
 
   const exportToExcel = () => {
@@ -98,7 +103,7 @@ export default function Home() {
             </svg>
           </CardHeader>
           <CardBody className="text-2xl font-bold">
-            {workersData.length}
+            {topWorkers.length}
           </CardBody>
         </Card>
 
@@ -179,14 +184,14 @@ export default function Home() {
             </TableHeader>
             <TableBody>
               {topWorkers &&
-                topWorkers.map((worker) => (
+                topWorkers.map((worker, index) => (
                   <TableRow
                     key={worker.id}
                     onClick={() => router.push(`/workers/${worker.id}`)}
                   >
-                    <TableCell>{worker.rank}</TableCell>
+                    <TableCell>{index + 1}</TableCell>
                     <TableCell>{worker.name}</TableCell>
-                    <TableCell>{worker.points}</TableCell>
+                    <TableCell>{worker.total_productivity}</TableCell>
                   </TableRow>
                 ))}
             </TableBody>
@@ -219,13 +224,13 @@ export default function Home() {
             </TableHeader>
             <TableBody>
               {topGroups &&
-                topGroups.map((group, idx) => (
+                topGroups.map((group, index) => (
                   <TableRow
-                    key={idx}
+                    key={group.id}
                     onClick={() => router.push(`/groups/${group.id}`)}
                   >
-                    <TableCell>{idx + 1}</TableCell>
-                    <TableCell>{group.name}</TableCell>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{group.team_id}</TableCell>
                     <TableCell>{group.leader}</TableCell>
                   </TableRow>
                 ))}

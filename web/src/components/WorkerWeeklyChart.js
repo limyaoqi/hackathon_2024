@@ -36,7 +36,6 @@ const WorkerWeeklyChart = ({ data }) => {
   useEffect(() => {
     const ctx = chartRef.current.getContext("2d");
 
-    // Get both weekly and accumulated performance data
     const weeklyData = getWeeklyData(data); // Original weekly data
     const accumulatedData = getAccumulatedData(weeklyData); // Accumulated weekly data
 
@@ -50,7 +49,6 @@ const WorkerWeeklyChart = ({ data }) => {
             data: weeklyData, // Y-axis data: Original performance per week
             borderColor: "rgba(75, 192, 192, 1)", // Color for the original data line
             backgroundColor: "rgba(75, 192, 192, 0.2)",
-            // fill: true,
             pointStyle: "circle",
             pointRadius: 5,
             pointHoverRadius: 10,
@@ -62,7 +60,6 @@ const WorkerWeeklyChart = ({ data }) => {
             data: accumulatedData, // Y-axis data: Accumulated performance
             borderColor: "rgba(54, 162, 235, 1)", // Color for the accumulated data line
             backgroundColor: "rgba(54, 162, 235, 0.2)",
-            // fill: false,
             pointStyle: "rect",
             pointRadius: 5,
             pointHoverRadius: 10,

@@ -49,13 +49,65 @@ def get_top_teams():
     current_month = get_current_month()
     past_five_months = get_past_months(5)
     
-    teams_ref = db.collection('teams').where('last_active_month', '>=', past_five_months)\
-                    .order_by('team_productivity', direction=firestore.Query.DESCENDING).limit(10)
+    teams_ref = db.collection('teams').where('last_active_month', '>=', past_five_months) \
+                    .order_by('total_productivity', direction=firestore.Query.DESCENDING) \
+                    .limit(10)
     
     teams = [doc.to_dict() for doc in teams_ref.stream()]
     if not teams:
         return jsonify({"message": "No teams found!"})
     return jsonify(teams)
+
+
+@app.route('/worker/<worker_id>', methods=['GET'])
+def get_worker(worker_id):
+    worker_ref = db.collection('workers').document(worker_id)
+    worker = worker_ref.get()
+
+    if worker.exists:
+        worker_data = worker.to_dict()
+        if 'team_assignments' in worker_data and worker_data['team_assignments']:
+            # Fetch the first team
+            team_id = worker_data['team_assignments'][0].get('team_id')
+            team_ref = db.collection('teams').document(team_id)
+            team = team_ref.get()
+
+            if team.exists:
+                team_data = team.to_dict()
+                # Add team information to the worker data
+                worker_data['team_info'] = {
+                    'team_id': team_data['team_id'],
+                    'leader': next((member['worker_id'] for member in team_data['members'] if member['role'] == 'leader'), None),
+                    'members': [member['worker_id'] for member in team_data['members']],
+                    'productivity': team_data['productivity']  # Monthly productivity data
+                }
+            else:
+                worker_data['team_info'] = "No team found"
+        return jsonify(worker_data), 200
+    else:
+        return jsonify({'error': 'Worker not found'}), 404
+
+
+@app.route('/worker/<worker_id>/performance', methods=['GET'])
+def get_worker_performance(worker_id):
+    # Fetch worker data from Firestore
+    worker_ref = db.collection('workers').document(worker_id)
+    worker = worker_ref.get()
+
+    if not worker.exists:
+        return jsonify({"message": "Worker not found!"}), 404
+
+    worker_data = worker.to_dict()
+
+    # Use actual daily productivity data stored in Firestore
+    worker_prod = worker_data.get('daily_productivity', {})
+
+    return jsonify({
+        "worker_id": worker_id,
+        "name": worker_data.get("name"),
+        "performance": worker_prod
+    })
+
 
 @app.route('/assign-teams', methods=['GET'])
 def assign_teams_route():
