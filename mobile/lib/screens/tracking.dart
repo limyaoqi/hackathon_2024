@@ -102,105 +102,155 @@ class _TrackingPageState extends State<TrackingPage> {
       });
     }
 
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: PreferredSize(
+            preferredSize:
+                Size.fromHeight(50.0), // Set the height for the TabBar
+            child: Container(
+              color: Colors.white, // Change background color of TabBar area
+              child: TabBar(
+                tabs: [
+                  Tab(text: "Timer"),
+                  Tab(text: "Distance"),
+                ],
+              ),
+            ),
+          ),
+          title: const Text(
+            "Task Tracking",
+            style: TextStyle(
+              fontSize: 24, // Increased font size for the app bar title
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2, // Adding slight spacing for elegance
+            ),
+          ),
+          backgroundColor: Colors.green[700],
+          elevation: 4,
+        ),
+        body: TabBarView(
           children: [
-            Text(
-              widget.selectedTask == ""
-                  ? "No task selected"
-                  : widget.selectedTask,
-              style: TextStyle(fontSize: 26),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  child: CircularProgressIndicator(
-                    value: progress, // The progress of the countdown
-                    strokeWidth: 8.0,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                    backgroundColor: Colors.grey[300],
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.selectedTask == ""
+                        ? "No task selected"
+                        : widget.selectedTask,
+                    style: TextStyle(fontSize: 26),
                   ),
-                  height: 200.0,
-                  width: 200.0,
-                ),
-                Text(
-                  '${isNegative ? "-" : ""}$hours:$minutes:$seconds',
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
+                  SizedBox(
+                    height: 30,
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: IconButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.disabled)) {
-                            return Color.fromARGB(255, 238, 230, 255);
-                          } else {
-                            return Color(0xffDFCEFA);
-                          }
-                        },
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        child: CircularProgressIndicator(
+                          value: progress, // The progress of the countdown
+                          strokeWidth: 8.0,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.blue),
+                          backgroundColor: Colors.grey[300],
+                        ),
+                        height: 200.0,
+                        width: 200.0,
                       ),
-                    ),
-                    onPressed: widget.selectedTask != ""
-                        ? () {
-                            widget.isRunning
-                                ? widget.stopTimer()
-                                : widget.startTimer();
-                          }
-                        : null,
-                    icon:
-                        Icon(widget.isRunning ? Icons.pause : Icons.play_arrow),
-                    iconSize: 30,
-                  ),
-                ),
-                SizedBox(width: 20),
-                SizedBox(
-                  height: 60,
-                  width: 60,
-                  child: IconButton(
-                    iconSize: 30,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.disabled)) {
-                            return Color.fromARGB(255, 238, 230, 255);
-                          } else {
-                            return Color(0xffDFCEFA);
-                          }
-                        },
+                      Text(
+                        '${isNegative ? "-" : ""}$hours:$minutes:$seconds',
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    // onPressed: widget.selectedTask != "" ? widget.resetTimer : null,
-                    onPressed: widget.selectedTask != ""
-                        ? () {
-                            _doneTask(context, widget.selectedTask,
-                                widget.taskIndex, widget.taskType);
-                          }
-                        : null,
-                    icon: Icon(Icons.check),
+                    ],
                   ),
-                )
-              ],
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: IconButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.disabled)) {
+                                  return Color.fromARGB(255, 238, 230, 255);
+                                } else {
+                                  return Color(0xffDFCEFA);
+                                }
+                              },
+                            ),
+                          ),
+                          onPressed: widget.selectedTask != ""
+                              ? () {
+                                  widget.isRunning
+                                      ? widget.stopTimer()
+                                      : widget.startTimer();
+                                }
+                              : null,
+                          icon: Icon(widget.isRunning
+                              ? Icons.pause
+                              : Icons.play_arrow),
+                          iconSize: 30,
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: IconButton(
+                          iconSize: 30,
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.disabled)) {
+                                  return Color.fromARGB(255, 238, 230, 255);
+                                } else {
+                                  return Color(0xffDFCEFA);
+                                }
+                              },
+                            ),
+                          ),
+                          // onPressed: widget.selectedTask != "" ? widget.resetTimer : null,
+                          onPressed: widget.selectedTask != ""
+                              ? () {
+                                  _doneTask(context, widget.selectedTask,
+                                      widget.taskIndex, widget.taskType);
+                                }
+                              : null,
+                          icon: Icon(Icons.check),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("Current distance covered:", style: TextStyle(fontSize: 20),),
+                  SizedBox(height: 20,),
+                  Text("1.1 km", style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold
+                  ),)
+                ],
+              ),
+            )
           ],
         ),
       ),

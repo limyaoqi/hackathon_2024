@@ -71,7 +71,9 @@ class _HistoryPageState extends State<HistoryPage> {
       return taskHistory;
     }
     String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate!);
-    return taskHistory.where((history) => history['date'] == formattedDate).toList();
+    return taskHistory
+        .where((history) => history['date'] == formattedDate)
+        .toList();
   }
 
   void _toggleShowAllTasks() {
@@ -82,13 +84,19 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> displayedTaskHistory = showAllTasks
-        ? taskHistory
-        : _getFilteredTaskHistory();
+    List<Map<String, dynamic>> displayedTaskHistory =
+        showAllTasks ? taskHistory : _getFilteredTaskHistory();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Task History"),
+        title: const Text(
+          "Task History",
+          style: TextStyle(
+            fontSize: 24, // Increased font size for the app bar title
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2, // Adding slight spacing for elegance
+          ),
+        ),
         backgroundColor: Colors.green[700],
         elevation: 4,
       ),
@@ -103,14 +111,16 @@ class _HistoryPageState extends State<HistoryPage> {
                   selectedDate == null
                       ? 'Select a date'
                       : 'Selected Date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 ElevatedButton.icon(
                   onPressed: () => _selectDate(context),
                   icon: const Icon(Icons.calendar_today),
                   label: const Text("Pick a Date"),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -118,9 +128,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
             ElevatedButton(
               onPressed: _toggleShowAllTasks,
               child: Text(
@@ -128,15 +136,14 @@ class _HistoryPageState extends State<HistoryPage> {
                 style: const TextStyle(fontSize: 16),
               ),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
             Expanded(
               child: displayedTaskHistory.isEmpty
                   ? const Center(child: Text('No tasks found for this date.'))
@@ -148,8 +155,11 @@ class _HistoryPageState extends State<HistoryPage> {
                         final List compulsoryTasks = history['compulsoryTasks'];
                         final List additionalTasks = history['additionalTasks'];
 
-                        int completedCompulsoryTasks = compulsoryTasks.where((task) => task['isCompleted']).length;
-                        bool allCompulsoryCompleted = completedCompulsoryTasks == compulsoryTasks.length;
+                        int completedCompulsoryTasks = compulsoryTasks
+                            .where((task) => task['isCompleted'])
+                            .length;
+                        bool allCompulsoryCompleted =
+                            completedCompulsoryTasks == compulsoryTasks.length;
 
                         return Card(
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -160,7 +170,8 @@ class _HistoryPageState extends State<HistoryPage> {
                           child: ExpansionTile(
                             title: Text(
                               "Tasks on $date",
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             children: [
                               Padding(
@@ -170,24 +181,35 @@ class _HistoryPageState extends State<HistoryPage> {
                                   children: [
                                     const Text(
                                       "Compulsory Tasks",
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    Text("Completed: $completedCompulsoryTasks / ${compulsoryTasks.length}"),
+                                    Text(
+                                        "Completed: $completedCompulsoryTasks / ${compulsoryTasks.length}"),
                                     const SizedBox(height: 8),
                                     ...compulsoryTasks.map<Widget>((task) {
                                       return ListTile(
                                         leading: Icon(
-                                          task['isCompleted'] ? Icons.check_circle : Icons.cancel,
-                                          color: task['isCompleted'] ? Colors.green : Colors.red,
+                                          task['isCompleted']
+                                              ? Icons.check_circle
+                                              : Icons.cancel,
+                                          color: task['isCompleted']
+                                              ? Colors.green
+                                              : Colors.red,
                                         ),
                                         title: Text(
                                           task['task'],
                                           style: const TextStyle(fontSize: 16),
                                         ),
                                         subtitle: Text(
-                                          task['isCompleted'] ? 'Completed' : 'Not Completed',
+                                          task['isCompleted']
+                                              ? 'Completed'
+                                              : 'Not Completed',
                                           style: TextStyle(
-                                            color: task['isCompleted'] ? Colors.green[700] : Colors.red[300],
+                                            color: task['isCompleted']
+                                                ? Colors.green[700]
+                                                : Colors.red[300],
                                           ),
                                         ),
                                       );
@@ -195,33 +217,45 @@ class _HistoryPageState extends State<HistoryPage> {
                                   ],
                                 ),
                               ),
-
                               if (allCompulsoryCompleted)
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Text(
                                         "Additional Tasks",
-                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      Text("Completed: ${additionalTasks.where((task) => task['isCompleted']).length} / ${additionalTasks.length}"),
+                                      Text(
+                                          "Completed: ${additionalTasks.where((task) => task['isCompleted']).length} / ${additionalTasks.length}"),
                                       const SizedBox(height: 8),
                                       ...additionalTasks.map<Widget>((task) {
                                         return ListTile(
                                           leading: Icon(
-                                            task['isCompleted'] ? Icons.check_circle : Icons.cancel,
-                                            color: task['isCompleted'] ? Colors.green : Colors.red,
+                                            task['isCompleted']
+                                                ? Icons.check_circle
+                                                : Icons.cancel,
+                                            color: task['isCompleted']
+                                                ? Colors.green
+                                                : Colors.red,
                                           ),
                                           title: Text(
                                             task['task'],
-                                            style: const TextStyle(fontSize: 16),
+                                            style:
+                                                const TextStyle(fontSize: 16),
                                           ),
                                           subtitle: Text(
-                                            task['isCompleted'] ? 'Completed' : 'Not Completed',
+                                            task['isCompleted']
+                                                ? 'Completed'
+                                                : 'Not Completed',
                                             style: TextStyle(
-                                              color: task['isCompleted'] ? Colors.green[700] : Colors.red[300],
+                                              color: task['isCompleted']
+                                                  ? Colors.green[700]
+                                                  : Colors.red[300],
                                             ),
                                           ),
                                         );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/screens/home.dart';
-import 'package:mobile/screens/profile.dart';
+import 'package:mobile/screens/group.dart';
+import 'package:mobile/screens/history.dart';
+import 'package:mobile/screens/homepage.dart';
 import 'package:mobile/screens/tracking.dart';
 import 'dart:async';
 
@@ -26,19 +27,22 @@ class _RootPageState extends State<RootPage> {
       "task": "Water the plants",
       "isCompleted": false,
       "inProgress": false,
-      "time": 5
+      "time": 5,
+      "distance": "1.1km",
     },
     {
       "task": "Check soil moisture",
       "isCompleted": false,
       "inProgress": false,
-      "time": 7200
+      "time": 7200,
+      "distance": "1.1km",
     },
     {
       "task": "Add fertilizer",
       "isCompleted": false,
       "inProgress": false,
-      "time": 14400
+      "time": 14400,
+      "distance": "1.1km",
     },
   ];
 
@@ -48,19 +52,22 @@ class _RootPageState extends State<RootPage> {
       "task": "Prune the plants",
       "isCompleted": false,
       "inProgress": false,
-      "time": 14400
+      "time": 14400,
+      "distance": "1.1km",
     },
     {
       "task": "Check for pests",
       "isCompleted": false,
       "inProgress": false,
-      "time": 14400
+      "time": 14400,
+      "distance": "1.1km",
     },
     {
       "task": "Clean the garden area",
       "isCompleted": false,
       "inProgress": false,
-      "time": 28800
+      "time": 28800,
+      "distance": "1.1km",
     },
   ];
 
@@ -165,57 +172,59 @@ class _RootPageState extends State<RootPage> {
         taskType: taskType,
         doneTask: doneTask,
       ),
-      ProfilePage()
+      GroupPage(),
+      HistoryPage()
     ];
     var page = widgetOptions.elementAt(_selectedIndex);
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xffDFCEFA),
-        title: Container(
-          width: double.infinity,
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'Ahmad',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              ),
-              const Text(
-                '200 points',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              ),
-              InkWell(
-                onTap: () {
-                  _onItemTapped(2);
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 210, 210, 210),
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/profile.jpg"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   backgroundColor: const Color(0xffDFCEFA),
+      //   title: Container(
+      //     width: double.infinity,
+      //     height: 60,
+      //     child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //       crossAxisAlignment: CrossAxisAlignment.center,
+      //       children: [
+      //         const Text(
+      //           'Ahmad',
+      //           style: TextStyle(
+      //               fontSize: 20,
+      //               fontWeight: FontWeight.bold,
+      //               color: Colors.black),
+      //         ),
+      //         const Text(
+      //           '200 points',
+      //           style: TextStyle(
+      //               fontSize: 20,
+      //               fontWeight: FontWeight.bold,
+      //               color: Colors.black),
+      //         ),
+      //         InkWell(
+      //           onTap: () {
+      //             _onItemTapped(2);
+      //           },
+      //           child: Container(
+      //             height: 30,
+      //             width: 30,
+      //             decoration: const BoxDecoration(
+      //               color: Color.fromARGB(255, 210, 210, 210),
+      //               shape: BoxShape.circle,
+      //               image: DecorationImage(
+      //                 image: AssetImage("assets/images/profile.jpg"),
+      //                 fit: BoxFit.cover,
+      //               ),
+      //             ),
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xffDFCEFA),
+        backgroundColor: Colors.green[700],
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -227,8 +236,8 @@ class _RootPageState extends State<RootPage> {
               icon: Icon(Icons.person), label: 'Profile & History')
         ],
         currentIndex: _selectedIndex,
-        unselectedItemColor: const Color.fromARGB(255, 155, 155, 155),
-        selectedItemColor: const Color.fromARGB(255, 114, 163, 187),
+        selectedItemColor: Color.fromARGB(255, 255, 255, 255),
+        unselectedItemColor: Color.fromARGB(255, 192, 182, 72),
         onTap: _onItemTapped,
       ),
       body: page,
