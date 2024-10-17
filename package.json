@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@nextui-org/react": "^2.4.8",
+    "heatmap.js": "^2.0.5"
+  }
+}
