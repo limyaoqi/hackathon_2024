@@ -4,6 +4,7 @@ import { Chart } from "chart.js/auto";
 const WorkerMonthlyChart = ({ data }) => {
   const chartRef = useRef(null);
 
+  // Accumulate performance data for each month (as you have already)
   const accumulateMonthlyPerformance = (data) => {
     let monthlyData = [];
     let sum = 0;
@@ -20,34 +21,67 @@ const WorkerMonthlyChart = ({ data }) => {
     return monthlyData;
   };
 
+  // Accumulate performance over months (new function)
+  const accumulateOverMonths = (monthlyData) => {
+    let accumulatedData = [];
+    let runningTotal = 0;
+
+    monthlyData.forEach((monthlyPerformance) => {
+      runningTotal += monthlyPerformance; // Accumulate the performance over months
+      accumulatedData.push(runningTotal); // Store the accumulated total
+    });
+
+    return accumulatedData;
+  };
+
   useEffect(() => {
     const ctx = chartRef.current.getContext("2d");
+
+    // Get monthly and accumulated data
     const monthlyData = accumulateMonthlyPerformance(data);
+    const accumulatedMonthlyData = accumulateOverMonths(monthlyData);
 
     const monthlyChart = new Chart(ctx, {
       type: "line",
       data: {
         labels: [
-          "Month 1",
-          "Month 2",
-          "Month 3",
-          "Month 4",
-          "Month 5",
-          "Month 6",
-          "Month 7",
-          "Month 8",
-          "Month 9",
-          "Month 10",
-          "Month 11",
-          "Month 12",
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
         ], // X-axis labels for 12 months
         datasets: [
           {
             label: "Monthly Performance",
-            data: monthlyData, // Y-axis data: Accumulated performance at the end of each month
+            data: monthlyData, // Y-axis data: performance for each month
             borderColor: "rgba(153, 102, 255, 1)",
             backgroundColor: "rgba(153, 102, 255, 0.2)",
-            fill: true,
+            // fill: true,
+            pointStyle: "circle",
+            pointRadius: 5,
+            pointHoverRadius: 10,
+            pointBackgroundColor: "rgba(255, 99, 71, 0.6)",
+            pointBorderColor: "rgba(255, 99, 71, 1)",
+          },
+          {
+            label: "Accumulated Performance",
+            data: accumulatedMonthlyData, // Y-axis data: accumulated performance over months
+            borderColor: "rgba(75, 192, 192, 1)", // Line color for accumulated data
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            // fill: false,
+            pointStyle: "rect",
+            pointRadius: 5,
+            pointHoverRadius: 10,
+            pointBackgroundColor: "rgba(255, 99, 132, 0.5)",
+            pointBorderColor: "rgba(255, 99, 132, 1)",
           },
         ],
       },
