@@ -56,18 +56,10 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'KMR APP',
+      title: 'PlantTrack',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: Colors.deepPurple,

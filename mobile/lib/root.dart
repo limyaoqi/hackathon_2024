@@ -11,7 +11,7 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
