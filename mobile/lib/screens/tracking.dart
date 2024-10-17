@@ -1,73 +1,122 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
+
 class TrackingPage extends StatefulWidget {
-  const TrackingPage({super.key});
+  TrackingPage({
+    super.key,
+    required this.selectedTask,
+    required this.currentTime,
+    required this.selectedTaskTime,
+    required this.isRunning,
+    required this.startTimer,
+    required this.stopTimer,
+    required this.taskType,
+    required this.taskIndex,
+    required this.doneTask,
+  });
+  String selectedTask;
+  int currentTime;
+  int selectedTaskTime;
+  String taskType;
+  int taskIndex;
+  bool isRunning;
+  Function startTimer;
+  Function stopTimer;
+  Function doneTask;
 
   @override
   State<TrackingPage> createState() => _TrackingPageState();
 }
 
 class _TrackingPageState extends State<TrackingPage> {
-  Timer? _timer;
-  int _start = 60; // Total countdown time (60 seconds)
-  int _currentTime = 60; // Tracks remaining time
-  bool isRunning = false;
-
-  // Function to start the timer
-  void startTimer() {
-    setState(() {
-      isRunning = true;
-    });
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_currentTime == 0) {
-        timer.cancel();
-        setState(() {
-          isRunning = false;
-        });
-      } else {
-        setState(() {
-          _currentTime--;
-        });
-      }
-    });
-  }
-
-  // Function to stop the timer
-  void stopTimer() {
-    _timer?.cancel();
-    setState(() {
-      isRunning = false;
-    });
-  }
-
   // Reset the timer
-  void resetTimer() {
-    _timer?.cancel();
-    setState(() {
-      _currentTime = _start;
-      isRunning = false;
-    });
+  // void resetTimer() {
+  //   _timer?.cancel();
+  //   setState(() {
+  //     _currentTime = _start;
+  //     isRunning = false;
+  //   });
+  // }
+
+  // void setTask(String task) {
+  //   setState(() {
+  //     selectedTask = task;
+  //   });
+  // }
+
+  void _doneTask(
+      BuildContext context, String taskName, int index, String type) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text('Please Confirm'),
+            content: Text('Are you sure you are done with $taskName?'),
+            actions: [
+              // The "Yes" button
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('No')),
+              TextButton(
+                  onPressed: () {
+                    widget.doneTask(index, type);
+
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('Yes')),
+            ],
+          );
+        });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double progress = _currentTime / _start;
+    bool isNegative = widget.currentTime < 0;
+    double progress = widget.currentTime.abs() / widget.selectedTaskTime;
+    String hours = ((widget.currentTime.abs() / 3600).floor()).toString();
+    String minutes = ((widget.currentTime.abs() / 60).floor() % 60).toString();
+    String seconds = (widget.currentTime.abs() % 60).toString();
+
+    if (hours.length < 2) {
+      setState(() {
+        hours = "0$hours";
+      });
+    }
+    if (minutes.length < 2) {
+      setState(() {
+        minutes = "0$minutes";
+      });
+    }
+    if (seconds.length < 2) {
+      setState(() {
+        seconds = "0$seconds";
+      });
+    }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Timer Page'),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text(
+              widget.selectedTask == ""
+                  ? "No task selected"
+                  : widget.selectedTask,
+              style: TextStyle(fontSize: 26),
+            ),
+            SizedBox(
+              height: 30,
+            ),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -82,7 +131,7 @@ class _TrackingPageState extends State<TrackingPage> {
                   width: 200.0,
                 ),
                 Text(
-                  '$_currentTime',
+                  '${isNegative ? "-" : ""}$hours:$minutes:$seconds',
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
@@ -90,14 +139,67 @@ class _TrackingPageState extends State<TrackingPage> {
                 ),
               ],
             ),
-            SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: isRunning ? stopTimer : startTimer,
-              child: Text(isRunning ? 'Stop' : 'Start'),
+            SizedBox(
+              height: 40,
             ),
-            ElevatedButton(
-              onPressed: resetTimer,
-              child: Text('Reset'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: IconButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.disabled)) {
+                            return Color.fromARGB(255, 238, 230, 255);
+                          } else {
+                            return Color(0xffDFCEFA);
+                          }
+                        },
+                      ),
+                    ),
+                    onPressed: widget.selectedTask != ""
+                        ? () {
+                            widget.isRunning
+                                ? widget.stopTimer()
+                                : widget.startTimer();
+                          }
+                        : null,
+                    icon:
+                        Icon(widget.isRunning ? Icons.pause : Icons.play_arrow),
+                    iconSize: 30,
+                  ),
+                ),
+                SizedBox(width: 20),
+                SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: IconButton(
+                    iconSize: 30,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.disabled)) {
+                            return Color.fromARGB(255, 238, 230, 255);
+                          } else {
+                            return Color(0xffDFCEFA);
+                          }
+                        },
+                      ),
+                    ),
+                    // onPressed: widget.selectedTask != "" ? widget.resetTimer : null,
+                    onPressed: widget.selectedTask != ""
+                        ? () {
+                            _doneTask(context, widget.selectedTask,
+                                widget.taskIndex, widget.taskType);
+                          }
+                        : null,
+                    icon: Icon(Icons.check),
+                  ),
+                )
+              ],
             ),
           ],
         ),

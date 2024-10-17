@@ -1,42 +1,72 @@
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
+  HomePage(
+      {super.key,
+      required this.taskInProgress,
+      required this.setTask,
+      required this.compulsoryTasks,
+      required this.additionalTasks});
+  bool taskInProgress;
+  final Function setTask;
+  List<Map<String, dynamic>> compulsoryTasks;
+  List<Map<String, dynamic>> additionalTasks;
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Map<String, dynamic>> compulsoryTasks = [
-    {"task": "Water the plants", "isCompleted": false},
-    {"task": "Check soil moisture", "isCompleted": false},
-    {"task": "Add fertilizer", "isCompleted": false},
-  ];
-
-  // Additional plantation tasks with completion status
-  final List<Map<String, dynamic>> additionalTasks = [
-    {"task": "Prune the plants", "isCompleted": false},
-    {"task": "Check for pests", "isCompleted": false},
-    {"task": "Clean the garden area", "isCompleted": false},
-  ];
-
   // Method to toggle task completion
-  void _toggleTaskCompletion(List<Map<String, dynamic>> tasks, int index) {
-    setState(() {
-      tasks[index]['isCompleted'] = !tasks[index]['isCompleted'];
-    });
-  }
+  // void _toggleTaskCompletion(List<Map<String, dynamic>> tasks, int index) {
+  //   setState(() {
+  //     tasks[index]['isCompleted'] = !tasks[index]['isCompleted'];
+  //   });
+  // }
 
   // Check if all compulsory tasks are completed
-  bool _areAllCompulsoryTasksCompleted() {
-    return compulsoryTasks.every((task) => task['isCompleted']);
+  bool _areAllcompulsoryTasksCompleted() {
+    return widget.compulsoryTasks.every((task) => task['isCompleted']);
+  }
+
+  void _startTask(BuildContext context, String taskName, int index, String type,
+      int taskTime) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text('Please Confirm'),
+            content: Text('Are you sure you want to start $taskName?'),
+            actions: [
+              // The "Yes" button
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('No')),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      if (type == "compulsory") {
+                        widget.compulsoryTasks[index]['inProgress'] = true;
+                      } else if (type == "additional") {
+                        widget.additionalTasks[index]['inProgress'] = true;
+                      }
+                      widget.taskInProgress = true;
+                      widget.setTask(taskName, taskTime, type, index);
+                    });
+
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('Yes')),
+            ],
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     // Check if all compulsory tasks are completed
-    bool allCompulsoryTasksCompleted = _areAllCompulsoryTasksCompleted();
+    bool allcompulsoryTasksCompleted = _areAllcompulsoryTasksCompleted();
 
     return Scaffold(
       // appBar: AppBar(
@@ -61,21 +91,42 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: compulsoryTasks.length,
+                itemCount: widget.compulsoryTasks.length,
                 itemBuilder: (context, index) {
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ListTile(
-                      leading: Icon(
-                        Icons.nature,
-                        color: Colors.green[600],
-                      ),
-                      title: Text(compulsoryTasks[index]['task']),
+                      leading: widget.compulsoryTasks[index]['inProgress'] &&
+                              !widget.compulsoryTasks[index]['isCompleted']
+                          ? Icon(
+                              Icons.timer,
+                              color: Colors.yellow[600],
+                            )
+                          : Icon(
+                              Icons.nature,
+                              color: Colors.green[600],
+                            ),
+                      title: Text(widget.compulsoryTasks[index]['task']),
                       trailing: Checkbox(
-                        value: compulsoryTasks[index]['isCompleted'],
-                        onChanged: (bool? value) {
-                          _toggleTaskCompletion(compulsoryTasks, index);
-                        },
+                        tristate: true,
+                        value: widget.compulsoryTasks[index]['isCompleted']
+                            ? true
+                            : widget.compulsoryTasks[index]['inProgress']
+                                ? null
+                                : false,
+                        onChanged: widget.taskInProgress ||
+                                widget.compulsoryTasks[index]['isCompleted']
+                            ? null
+                            : (bool? value) {
+                                _startTask(
+                                  context,
+                                  widget.compulsoryTasks[index]['task'],
+                                  index,
+                                  "compulsory",
+                                  widget.compulsoryTasks[index]['time'],
+                                );
+                                // _toggleTaskCompletion(widget.compulsoryTasks, index);
+                              },
                       ),
                     ),
                   );
@@ -92,33 +143,52 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: additionalTasks.length,
+                itemCount: widget.additionalTasks.length,
                 itemBuilder: (context, index) {
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ListTile(
-                      leading: Icon(
-                        Icons.nature_people,
-                        color: allCompulsoryTasksCompleted
-                            ? Colors.green[600]
-                            : Colors
-                                .grey, // Disable look if compulsory not completed
-                      ),
+                      leading: widget.additionalTasks[index]['inProgress'] &&
+                              !widget.additionalTasks[index]['isCompleted']
+                          ? Icon(
+                              Icons.timer,
+                              color: Colors.yellow[600],
+                            )
+                          : Icon(
+                              Icons.nature,
+                              color: allcompulsoryTasksCompleted
+                                  ? Colors.green[600]
+                                  : Colors.grey,
+                            ),
                       title: Text(
-                        additionalTasks[index]['task'],
+                        widget.additionalTasks[index]['task'],
                         style: TextStyle(
-                          color: allCompulsoryTasksCompleted
+                          color: allcompulsoryTasksCompleted
                               ? Colors.black
                               : Colors.grey, // Text is greyed out if disabled
                         ),
                       ),
                       trailing: Checkbox(
-                        value: additionalTasks[index]['isCompleted'],
-                        onChanged: allCompulsoryTasksCompleted
-                            ? (bool? value) {
-                                _toggleTaskCompletion(additionalTasks, index);
-                              }
-                            : null, // Disable checkbox if compulsory not completed
+                        tristate: true,
+                        value: widget.additionalTasks[index]['isCompleted']
+                            ? true
+                            : widget.additionalTasks[index]['inProgress']
+                                ? null
+                                : false,
+                        onChanged: !allcompulsoryTasksCompleted ||
+                                widget.taskInProgress ||
+                                widget.additionalTasks[index]['isCompleted']
+                            ? null
+                            : (bool? value) {
+                                _startTask(
+                                  context,
+                                  widget.additionalTasks[index]['task'],
+                                  index,
+                                  "additional",
+                                  widget.additionalTasks[index]['time'],
+                                );
+                                // _toggleTaskCompletion(widget.compulsoryTasks, index);
+                              },
                       ),
                     ),
                   );
