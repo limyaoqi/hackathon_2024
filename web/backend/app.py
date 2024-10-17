@@ -19,7 +19,7 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 def get_current_month():
-    """Returns the current month and year as a tuple (YYYY-MM)."""
+    """Returns the current month and year as a tuple (YYYY-MM). """
     now = datetime.now()
     return now.strftime("%Y-%m")
 
