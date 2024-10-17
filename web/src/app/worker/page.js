@@ -24,6 +24,10 @@ const WorkerDetailPage = () => {
   const heatmapContainer = useRef(null);
   const [timeRange, setTimeRange] = useState("today");
 
+  // Mock data for step count and distance
+  const stepCount = 12345; // Mock step data
+  const distance = 8.5; // Mock distance data in kilometers
+
   useEffect(() => {
     const container = heatmapContainer.current;
 
@@ -139,6 +143,35 @@ const WorkerDetailPage = () => {
                 className="bg-green-600 h-2.5 rounded-full"
                 style={{ width: "60%" }}
               />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Step and Distance Information */}
+      <div className="mt-8 bg-white rounded-lg shadow p-6 border border-gray-200">
+        <h2 className="text-xl font-semibold mb-4 text-slate-800">
+          Task Metrics
+        </h2>
+        <div className="space-y-4">
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-sm font-medium text-slate-700">
+                Step Count
+              </span>
+              <span className="text-sm font-medium text-slate-800">
+                {stepCount.toLocaleString()} steps
+              </span>
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-sm font-medium text-slate-700">
+                Distance Traveled
+              </span>
+              <span className="text-sm font-medium text-slate-800">
+                {distance.toFixed(2)} km
+              </span>
             </div>
           </div>
         </div>
