@@ -14,8 +14,10 @@ import {
 } from "@nextui-org/react";
 import workersData from "@/data/workers";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [workers, setWorkers] = useState(workersData);
   const [sortBy, setSortBy] = useState("points1");
   const [status, setStatus] = useState();
@@ -57,7 +59,7 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto p-10">
       <div className=" flex justify-between align-middle mb-5">
-        <h1 className=" font-bold text-4xl">Dashboard</h1>
+        <h1 className=" font-bold text-4xl">Workers</h1>
 
         <div className=" flex gap-3 w-full justify-end">
           <Select
@@ -110,22 +112,22 @@ export default function Dashboard() {
           <TableColumn>NAME</TableColumn>
           <TableColumn>SKILLSET</TableColumn>
           <TableColumn>STATUS</TableColumn>
+          <TableColumn>GROUP</TableColumn>
+          <TableColumn>ROLE</TableColumn>
           <TableColumn>POINTS</TableColumn>
         </TableHeader>
         <TableBody>
           {workers &&
             workers.map((worker) => (
-              <TableRow key={worker.id} className="">
+              <TableRow
+                key={worker.id}
+                className=""
+                onClick={() => router.push(`/workers/${worker.id}`)}
+              >
                 <TableCell className=" font-bold">{worker.rank}</TableCell>
                 <TableCell>{worker.id}</TableCell>
                 <TableCell>
-                  <User
-                    name={worker.name}
-                    // description={"@jrgarciadev"}
-                    // avatarProps={{
-                    //   src: "https://avatars.githubusercontent.com/u/30373425?v=4",
-                    // }}
-                  />
+                  <User name={worker.name} />
                 </TableCell>
                 <TableCell>
                   {worker.skillSet &&
@@ -152,6 +154,26 @@ export default function Dashboard() {
                     variant="flat"
                   >
                     {worker.availability ? "Available" : "Not Available"}
+                  </Chip>
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    className="capitalize"
+                    color="primary"
+                    size="sm"
+                    variant="flat"
+                  >
+                    {worker.group}
+                  </Chip>
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    className="capitalize"
+                    color={worker.role === "Leader" ? "warning" : "default"}
+                    size="sm"
+                    variant="flat"
+                  >
+                    {worker.role}
                   </Chip>
                 </TableCell>
                 <TableCell>{worker.points}</TableCell>
