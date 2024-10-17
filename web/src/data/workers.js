@@ -1,54 +1,204 @@
 const workersData = [
-  { id: 1, name: "John Doe", points: 1250 },
-  { id: 2, name: "Jane Smith", points: 1400 },
-  { id: 3, name: "Michael Johnson", points: 1130 },
-  { id: 4, name: "Emily Davis", points: 980 },
-  { id: 5, name: "David Martinez", points: 1575 },
-  { id: 6, name: "Emma Brown", points: 1450 },
-  { id: 7, name: "Daniel Wilson", points: 1030 },
-  { id: 8, name: "Olivia Garcia", points: 1190 },
-  { id: 9, name: "James Miller", points: 1670 },
-  { id: 10, name: "Sophia Rodriguez", points: 1320 },
-  { id: 11, name: "Benjamin Lee", points: 1285 },
-  { id: 12, name: "Isabella White", points: 1010 },
-  { id: 13, name: "William Harris", points: 1495 },
-  { id: 14, name: "Charlotte Thompson", points: 1360 },
-  { id: 15, name: "Lucas Lewis", points: 1235 },
-  { id: 16, name: "Ava Walker", points: 1165 },
-  { id: 17, name: "Alexander Hall", points: 1520 },
-  { id: 18, name: "Mia Allen", points: 980 },
-  { id: 19, name: "Ethan Young", points: 1420 },
-  { id: 20, name: "Amelia King", points: 1305 },
-  { id: 21, name: "Logan Wright", points: 1140 },
-  { id: 22, name: "Harper Scott", points: 1600 },
-  { id: 23, name: "Mason Green", points: 1075 },
-  { id: 24, name: "Ella Adams", points: 1255 },
-  { id: 25, name: "Jacob Baker", points: 1385 },
-  { id: 26, name: "Aiden Nelson", points: 1110 },
-  { id: 27, name: "Liam Carter", points: 1505 },
-  { id: 28, name: "Emily Mitchell", points: 1475 },
-  { id: 29, name: "Matthew Perez", points: 1200 },
-  { id: 30, name: "Ella Roberts", points: 1330 },
-  { id: 31, name: "Jacob Turner", points: 1395 },
-  { id: 32, name: "Jackson Phillips", points: 1240 },
-  { id: 33, name: "Mila Campbell", points: 1105 },
-  { id: 34, name: "Sebastian Parker", points: 1355 },
-  { id: 35, name: "Sofia Evans", points: 1415 },
-  { id: 36, name: "Henry Edwards", points: 1460 },
-  { id: 37, name: "Victoria Collins", points: 1195 },
-  { id: 38, name: "Wyatt Stewart", points: 1325 },
-  { id: 39, name: "Owen Sanchez", points: 1175 },
-  { id: 40, name: "Scarlett Morris", points: 1340 },
-  { id: 41, name: "Dylan Rivera", points: 1085 },
-  { id: 42, name: "Luna Peterson", points: 1150 },
-  { id: 43, name: "Elijah Cooper", points: 1370 },
-  { id: 44, name: "Ella Reed", points: 1095 },
-  { id: 45, name: "Lillian Bailey", points: 1550 },
-  { id: 46, name: "Nathan Clark", points: 1530 },
-  { id: 47, name: "Zoe Rodriguez", points: 1300 },
-  { id: 48, name: "Isaac Bell", points: 1025 },
-  { id: 49, name: "Lucas Murphy", points: 1645 },
-  { id: 50, name: "Lily Barnes", points: 1435 },
+  {
+    id: 1,
+    name: "John Doe",
+    skillSet: ["Harvesting", "Fertilizing"],
+    historicalProductivity: [100, 150, 120], // Historical productivity values
+    taskEfficiency: {
+      harvesting: 90, // Efficiency percentage for harvesting
+      fertilizing: 85,
+      spraying: NaN, // NaN for tasks not applicable
+    },
+    availability: true, // Worker availability
+    points: 1250, // Points earned by the worker
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    skillSet: ["Harvesting", NaN], // NaN value for skill
+    historicalProductivity: [200, 250, 230],
+    taskEfficiency: {
+      harvesting: 95,
+      fertilizing: NaN, // NaN for tasks not applicable
+      spraying: 88,
+    },
+    availability: false,
+    points: 1400,
+  },
+  {
+    id: 3,
+    name: "Michael Johnson",
+    skillSet: [NaN, "Fertilizing"], // NaN for undefined skill
+    historicalProductivity: [180, 190, 170],
+    taskEfficiency: {
+      harvesting: NaN, // No harvesting skills
+      fertilizing: 90,
+      spraying: 85,
+    },
+    availability: true,
+    points: 1130,
+  },
+  {
+    id: 4,
+    name: "Emily Davis",
+    skillSet: ["Spraying"],
+    historicalProductivity: [150, 160, 155],
+    taskEfficiency: {
+      harvesting: NaN, // No harvesting skills
+      fertilizing: NaN, // No fertilizing skills
+      spraying: 92,
+    },
+    availability: true,
+    points: 980,
+  },
+  {
+    id: 5,
+    name: "David Martinez",
+    skillSet: ["Harvesting", "Spraying"],
+    historicalProductivity: [300, 310, 290],
+    taskEfficiency: {
+      harvesting: 98,
+      fertilizing: NaN, // NaN for tasks not applicable
+      spraying: 95,
+    },
+    availability: false,
+    points: 1575,
+  },
+  {
+    id: 6,
+    name: "Emma Brown",
+    skillSet: ["Fertilizing", "Spraying"],
+    historicalProductivity: [140, 145, 150],
+    taskEfficiency: {
+      harvesting: NaN,
+      fertilizing: 88,
+      spraying: 90,
+    },
+    availability: true,
+    points: 1450,
+  },
+  {
+    id: 7,
+    name: "Daniel Wilson",
+    skillSet: [NaN, NaN], // Both skills unknown
+    historicalProductivity: [120, 115, 110],
+    taskEfficiency: {
+      harvesting: NaN,
+      fertilizing: NaN,
+      spraying: NaN,
+    },
+    availability: true,
+    points: 1030,
+  },
+  {
+    id: 8,
+    name: "Olivia Garcia",
+    skillSet: ["Harvesting"],
+    historicalProductivity: [220, 230, 215],
+    taskEfficiency: {
+      harvesting: 85,
+      fertilizing: NaN,
+      spraying: NaN,
+    },
+    availability: true,
+    points: 1190,
+  },
+  {
+    id: 9,
+    name: "James Miller",
+    skillSet: ["Fertilizing", "Harvesting"],
+    historicalProductivity: [300, 320, 310],
+    taskEfficiency: {
+      harvesting: 90,
+      fertilizing: 92,
+      spraying: 87,
+    },
+    availability: false,
+    points: 1670,
+  },
+  {
+    id: 10,
+    name: "Sophia Rodriguez",
+    skillSet: ["Spraying"],
+    historicalProductivity: [190, 200, 210],
+    taskEfficiency: {
+      harvesting: NaN,
+      fertilizing: NaN,
+      spraying: 93,
+    },
+    availability: true,
+    points: 1320,
+  },
+  {
+    id: 11,
+    name: "Benjamin Lee",
+    skillSet: ["Harvesting", "Fertilizing"],
+    historicalProductivity: [160, 150, 155],
+    taskEfficiency: {
+      harvesting: 88,
+      fertilizing: 85,
+      spraying: NaN,
+    },
+    availability: true,
+    points: 1285,
+  },
+  {
+    id: 12,
+    name: "Isabella White",
+    skillSet: ["Harvesting", "Spraying"],
+    historicalProductivity: [180, 190, 170],
+    taskEfficiency: {
+      harvesting: 95,
+      fertilizing: NaN,
+      spraying: 90,
+    },
+    availability: false,
+    points: 1010,
+  },
+  {
+    id: 13,
+    name: "William Harris",
+    skillSet: [NaN, "Fertilizing"],
+    historicalProductivity: [240, 250, 260],
+    taskEfficiency: {
+      harvesting: NaN,
+      fertilizing: 91,
+      spraying: NaN,
+    },
+    availability: true,
+    points: 1495,
+  },
+  {
+    id: 14,
+    name: "Charlotte Thompson",
+    skillSet: ["Spraying"],
+    historicalProductivity: [130, 120, 125],
+    taskEfficiency: {
+      harvesting: NaN,
+      fertilizing: NaN,
+      spraying: 89,
+    },
+    availability: true,
+    points: 1360,
+  },
+  {
+    id: 15,
+    name: "Lucas Lewis",
+    skillSet: ["Harvesting", "Fertilizing"],
+    historicalProductivity: [250, 240, 245],
+    taskEfficiency: {
+      harvesting: 90,
+      fertilizing: 88,
+      spraying: NaN,
+    },
+    availability: false,
+    points: 1235,
+  },
 ];
+
+workersData.sort((a, b) => b.points - a.points);
+workersData.forEach((item, index) => {
+  item.rank = index + 1;
+});
 
 export default workersData;
