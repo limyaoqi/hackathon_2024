@@ -46,7 +46,7 @@ const WorkerWeeklyChart = ({ data }) => {
           y: { display: true, title: { display: true, text: "Performance" } },
         },
         responsive: true,
-        maintainAspectRatio: false,
+        // maintainAspectRatio: false,
       },
     });
 
