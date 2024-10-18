@@ -51,6 +51,13 @@ export default function Home() {
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-3xl font-bold w-full">Manager Dashboard</h1>
         <div className="flex items-center gap-4 w-full justify-end">
+          <Button
+            color="secondary"
+            onClick={() => router.push("/next_month_team")}
+            className="max-w-xs"
+          >
+            Next Month Team
+          </Button>
           <Select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
@@ -80,8 +87,10 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Rest of the component remains the same */}
       {/* MIDDLE */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
+        {/* Cards remain the same */}
         {/* Total Employees Card */}
         <Card className="">
           <CardHeader className="flex justify-between items-center mb-2">
@@ -154,7 +163,7 @@ export default function Home() {
         </Card>
       </div>
 
-      {/* Productivity Chart */}
+      {/* Tables section remains the same */}
       <div className="grid grid-cols-2 gap-5">
         {/* WORKERS */}
         <div className="">
@@ -172,7 +181,6 @@ export default function Home() {
             </Button>
           </div>
 
-          {/* TABLE */}
           <Table
             aria-label="Example table with custom cells"
             selectionMode="single"
@@ -212,7 +220,6 @@ export default function Home() {
             </Button>
           </div>
 
-          {/* TABLE */}
           <Table
             aria-label="Example table with custom cells"
             selectionMode="single"
