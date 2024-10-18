@@ -3,7 +3,7 @@ import firebase_admin
 import os
 from firebase_admin import credentials, firestore
 from flask_cors import CORS
-from pairing_logic import assign_teams, adjust_teams
+from pairing_logic import form_and_adjust_teams
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
@@ -185,48 +185,56 @@ def get_team(team_id):
     else:
         return jsonify({'error': 'Team not found'}), 404
 
+@app.route('/assign-team', methods=['Get'])
+def fetch_data_from_firestore():
+    workers = []
+    pair_productivity = {}
+    compatibility_scores = {}
+
+    # Fetch workers from Firestore
+    workers_ref = db.collection('workers')
+    workers_docs = workers_ref.stream()
+
+    for doc in workers_docs:
+        worker_data = doc.to_dict()
+        
+        # Use 'id' as the key for worker ID (based on your example data)
+        # worker_id = worker_data['id']  # Changed from 'worker_id' to 'id'
+        workers.append(worker_data)
+
+        # Add pair productivity from each worker's productivity_scores
+        # Ensure productivity_scores contains dictionaries, not strings
+        for partner_id, prod_data in worker_data.get('productivity_scores', {}).items():
+            if isinstance(prod_data, dict):  # Check if it's a dictionary
+                pair_key = f'({worker_id}, {partner_id})'
+                pair_productivity[pair_key] = {
+                    'score': prod_data.get('score'),  # Ensure we access it properly
+                    'times_worked': prod_data.get('times_worked'),
+                    'last_collaborated': prod_data.get('last_collaborated')
+                }
+        
+        
+
+        # Add compatibility scores (ensure it's a dictionary)
+        for partner_id, comp_data in worker_data.get('compatibility_scores', {}).items():
+            if isinstance(comp_data, dict):  # Check if it's a dictionary
+                compatibility_scores[(worker_id, partner_id)] = comp_data.get('score')
+
+    return workers, pair_productivity, compatibility_scores
 
 
+@app.route('/assign-teams', methods=['Get'])
+def assign_and_adjust_teams():
+    try:
+        # Fetch workers, pair productivity, and compatibility scores from Firestore
+        workers, pair_productivity, compatibility_scores = fetch_data_from_firestore()
 
+        # Call the logic to form and adjust teams
+        teams = form_and_adjust_teams(workers, pair_productivity, compatibility_scores)
 
-
-@app.route('/assign-teams', methods=['GET'])
-def assign_teams_route():
-    # Retrieve workers from Firestore and extract needed attributes
-    workers_ref = db.collection('workers').stream()
-    workers = [doc.to_dict()['worker_id'] for doc in workers_ref]  # Example: using 'worker_id' from Firestore data
-
-    # Pull pair_productivity data from Firestore, if available
-    # You can add logic to store and retrieve pair productivity data from Firestore if needed
-    pair_productivity = {
-        # Example: ('Worker_A', 'Worker_B'): {'score': 7, 'times_worked': 2},
-    }
-
-    # Call assign_teams to create initial teams based on workers from Firestore
-    teams = assign_teams(workers, pair_productivity)
-
-    return jsonify({"teams": teams})
-
-@app.route('/adjust-teams', methods=['POST'])
-def adjust_teams_route():
-    # Fetch teams from Firestore (you can store teams from previous assignments)
-    teams_ref = db.collection('teams').stream()
-    teams = [doc.to_dict()['members'] for doc in teams_ref]  # Assuming 'members' field holds team member IDs
-
-    # Fetch unassigned workers
-    unassigned_workers_ref = db.collection('workers').where('is_active', '==', True).stream()
-    unassigned_workers = [doc.to_dict()['worker_id'] for doc in unassigned_workers_ref if doc.to_dict()['worker_id'] not in teams]
-
-    # Pull pair_productivity data from Firestore, if available
-    pair_productivity = {
-        # Example: ('Worker_A', 'Worker_B'): {'score': 7, 'times_worked': 2},
-    }
-
-    # Adjust teams based on performance
-    adjusted_teams = adjust_teams(teams, unassigned_workers, pair_productivity)
-
-    return jsonify({"adjusted_teams": adjusted_teams})
-
+        return jsonify(teams)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
